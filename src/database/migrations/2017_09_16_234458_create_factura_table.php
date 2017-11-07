@@ -19,8 +19,8 @@ class CreateFacturaTable extends Migration
             $table->dateTime('fecha');
             $table->integer('id_cliente')->unsigned(); //->index();
             $table->integer('id_plan_pago')->unsigned();
-            $table->integer('cuotas')->unsigned();
-            $table->decimal('valor_cuota', 8, 2);
+            $table->integer('cuotas')->unsigned()->default(0);
+            $table->decimal('valor_cuota', 8, 2)->default(0.0);
             $table->integer('id_vendedor')->unsigned(); //->index();
             $table->decimal('valor_total', 15, 2);
             $table->string('estado', 50);
