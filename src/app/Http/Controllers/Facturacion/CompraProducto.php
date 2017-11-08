@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Inventario\Articulo;
 use App\Models\Facturacion\FacturaProducto;
+use App\Models\Facturacion\Factura;
 
 class CompraProducto extends Controller
 {
@@ -28,7 +29,7 @@ class CompraProducto extends Controller
 			$PrecioBase = $Producto[0]->precio_basico;
 			$PrecioProducto = $PrecioBase + ($PrecioBase*0.25);
 			echo "El precio de base del producto es: ".$PrecioBase;
-			echo "\n El precio real del producto es: ".$PrecioProducto;
+			echo "<br> El precio real del producto es: ".$PrecioProducto;
 			return $PrecioProducto;
 		} else {
 			echo "No hay disponibilidad del producto";
@@ -39,6 +40,12 @@ class CompraProducto extends Controller
 	public function registrarProductos($id_producto, $cantidad, $idFactura){
 
 		$Producto = Articulo::where("id", $id_producto)->get();
+		$FacturaG = Factura::where("id", $idFactura)->get();
+		if (count($FacturaG)){
+			echo "Esta Factura Existe<br>";	
+		}else{
+			echo "Esta Factura no Existe<br>";
+		}
 		if ($Producto[0]->cantidad >= $cantidad) {
 
 			$valorVenta = self::precioVenta($id_producto);
@@ -62,7 +69,7 @@ class CompraProducto extends Controller
 				$cantidadInv = $Producto[0]->cantidad;
 				$nuevaCantidad = $cantidadInv - $cantidad;
 				Articulo::where('id', $id_producto)->update(['cantidad' => $nuevaCantidad]);
-				echo "Cantidad actualizada, el inventario disponible ahora es:".$nuevaCantidad;
+				echo "<br> Cantidad actualizada, el inventario disponible ahora es:".$nuevaCantidad;
 				//return true;
 			}
 		} else {
