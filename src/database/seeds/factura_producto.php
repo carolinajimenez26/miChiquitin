@@ -15,7 +15,7 @@ class factura_producto extends Seeder
         for ($i = 0; $i < $limit; $i++) {
             DB::table("factura_productos")->insert([ //,
             	'id_factura' => '1',
-                'id_articulo' => '1',
+                'id_articulo' => '9',
                 'cantidad' => '3',
                 'precio_venta' => '40000',
             ]);
