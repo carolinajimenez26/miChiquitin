@@ -28,13 +28,35 @@ Route::group(['prefix' => 'Facturacion'], function(){
     'uses' => 'Facturacion\ArticuloControlador@CancelarCompra'
   ]);
 
-  Route::get('compraCredito/{idCliente}/{valorTotalPago}/{NumeroCuotas}/{idFactura}', [
-    'uses' => 'Facturacion\FacturaController@compraCredito'
-  ]);
-
   Route::get('metodoPago/{metodo}/{valorTotal}/{idCliente}/{NumeroCuotas}/{idFactura}', [
     'uses' => 'Facturacion\MetodoDePago@metodoPago'
-    ]);
+  ]);
+
+  Route::get('/registrarProductos/{id_producto}/{cantidad}/{idFactura}', [
+    'uses' => 'Facturacion\CompraProducto@registrarProductos'
+  ]);
+
+  Route::get('validacion', [
+    'uses' => 'Facturacion\ValidarCliente@validar',
+    'as' => 'factura.validacion.validar',  
+  ]);
+
+  Route::get('indexFactura', [
+    'uses' => 'Facturacion\ValidarCliente@index',
+    'as' => 'factura.validacion.index',
+  ]);
+
+  Route::get('Factura', [
+    'uses' => 'Facturacion\CompraProducto@index',
+    'as' => 'factura.compra.index',
+  ]);
+
+  Route::get('FacturaImpresion', [
+    'uses' => 'Facturacion\CompraProducto@imprimirFactura',
+    'as' => 'factura.compra.impresion',
+  ]);
+
+
 });
 
 //Cartera::reoutes();

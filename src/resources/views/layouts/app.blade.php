@@ -31,7 +31,7 @@
     <div class="page-header navbar navbar-fixed-top">
         <div class="page-header-inner container">
             <div class="logo-app">
-                <a href="#">
+                <a href="{{ route('home') }}">
                     <img src="{{ asset('assets/img/chiquitin.png') }}" alt="logo" width="160" height="30">
                 </a>
                 <div class="menu-toggler sidebar-toggler"><span></span></div>
