@@ -41,4 +41,8 @@ Route::group(['prefix' => 'Facturacion'], function(){
   ]);
 });
 
+Route::get('error', function(){ 
+    abort(500);
+});
+
 //Cartera::reoutes();

@@ -11,43 +11,60 @@ use App\Models\Facturacion\Factura;
 class ArticuloControlador extends Controller
 {
   public function EliminarArticulo($id, $cantidadActual, $cantidadEliminar, $idFactura) {
-
-    if($cantidadEliminar < $cantidadActual) {
-
+    if(is_string($id)){
       $articuloFactura = FacturaProducto::where("id", $id)->get();
-      $CantidadFactura = $cantidadActual - $cantidadEliminar;
-      FacturaProducto::where("id", $id)->update(['cantidad' => $CantidadFactura]);
+      if(sizeof($articuloFactura) > 0 ) {
 
-      $idArticulo = $articuloFactura[0]->id_articulo;
+        if($cantidadEliminar < $cantidadActual) {
+          $CantidadFactura = $cantidadActual - $cantidadEliminar;
+          FacturaProducto::where("id", $id)->update(['cantidad' => $CantidadFactura]);
 
-      $articuloInventario = Articulo::where('id', $idArticulo)->get();
-      $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
-      Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
+          $idArticulo = $articuloFactura[0]->id_articulo;
+
+          $articuloInventario = Articulo::where('id', $idArticulo)->get();
+          $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
+          Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
+        } elseif($cantidadEliminar == $cantidadActual) {
+
+          $articuloFactura = FacturaProducto::where("id", $id)->get();
+          $idArticulo = $articuloFactura[0]->id_articulo;
+          $articuloFactura->delete();
+
+          $articuloInventario = Articulo::where('id', $idArticulo)->get();
+          $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
+          Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
+        } else {
+          dd("Cantidad invalida, supera la cantidad actual");
+        }
+
+      } else {
+        dd("Articulo no encontrado en la factura");
+      }
+
+    } else {
+      dd("Identificador invalido, intente nuevamente");
     }
-
-    if($cantidadEliminar == $cantidadActual) {
-
-      $articuloFactura = FacturaProducto::where("id", $id)->get();
-      $idArticulo = $articuloFactura[0]->id_articulo;
-      $articuloFactura->delete();
-
-      $articuloInventario = Articulo::where('id', $idArticulo)->get();
-      $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
-      Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
-    }
-    dd("Factura cancelada");
   }
 
   public function CancelarCompra($idFactura) {
-    $articulosFactura = FacturaProducto::where("id_factura", $idFactura)->get();
-    foreach ($articulosFactura as $articulo) {
-      $idArticulo = $articulo->id_articulo;
-      $cantidadEliminar = $articulo->cantidad;
-      $articulo->delete();
+    if(is_numeric($idFactura)){
+      $articulosFactura = FacturaProducto::where("id_factura", $idFactura)->get();
+      if(sizeof($articuloFactura) > 0 ) {
+        foreach ($articulosFactura as $articulo) {
+          $idArticulo = $articulo->id_articulo;
+          $cantidadEliminar = $articulo->cantidad;
+          $articulo->delete();
 
-      $articuloInventario = Articulo::where('id', $idArticulo)->get();
-      $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
-      Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
+          $articuloInventario = Articulo::where('id', $idArticulo)->get();
+          $CantidadInventario = $articuloInventario[0]->cantidad + $cantidadEliminar;
+          Articulo::where("id", $idArticulo)->update(['cantidad' => $CantidadInventario]);
+          dd("Factura cancelada");
+        }
+      } else {
+        dd("Factura no encontrada!");
+      }
+    } else {
+      dd("Identificador invalido, intente nuevamente");
     }
 
     //Revisar si es necesario eliminar cada producto.
