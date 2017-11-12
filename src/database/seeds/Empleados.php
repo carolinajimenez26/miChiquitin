@@ -1,9 +1,9 @@
 <?php
 
 use Illuminate\Database\Seeder;
-use App\Models\Inventario\Articulo;
+use App\Models\Usuarios\Empleado;
 
-class Articulos extends Seeder
+class Empleados extends Seeder
 {
     /**
      * Run the database seeds.
@@ -12,6 +12,6 @@ class Articulos extends Seeder
      */
     public function run()
     {
-        factory(Articulo::class, 5)->create();
+        factory(Empleado::class, 5)->create();
     }
 }

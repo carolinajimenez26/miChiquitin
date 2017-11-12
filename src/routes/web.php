@@ -28,7 +28,7 @@ Route::group(['prefix' => 'Facturacion'], function(){
     'uses' => 'Facturacion\ArticuloControlador@CancelarCompra'
   ]);
 
-  Route::get('metodoPago/{metodo}/{valorTotal}/{idCliente}/{NumeroCuotas}/{idFactura}', [
+  Route::get('metodoPago/{metodo}/{valorTotal}/{idCliente}/{idVendedor}/{NumeroCuotas}', [
     'uses' => 'Facturacion\MetodoDePago@metodoPago'
   ]);
 
@@ -36,19 +36,48 @@ Route::group(['prefix' => 'Facturacion'], function(){
     'uses' => 'Facturacion\CompraProducto@registrarProductos'
   ]);
 
-  Route::get('validacion/{id_cliente}/{id_vendedor}', [
-    'uses' => 'Facturacion\ValidarCliente@validar'
+  Route::get('validacion', [
+    'uses' => 'Facturacion\ValidarCliente@intermediar',
+    'as' => 'factura.validacion.intermediar',
+  ]);
+
+  Route::get('index', [
+    'uses' => 'Facturacion\ValidarCliente@index',
+    'as' => 'factura.validacion.index',
+  ]);
+
+  Route::get('pagoDeuda/{id_factura}/{cuota}', [
+    'uses' => 'Facturacion\pagoDeuda@pagar'
+  ]);
+
+  Route::get('FacturaImpresion', [
+    'uses' => 'Facturacion\CompraProducto@imprimirFactura',
+    'as' => 'factura.compra.impresion',
   ]);
 
   Route::get('reporte', [
-    'uses' => 'Facturacion\Reporte@index'
+    'uses' => 'Facturacion\Reporte@index',
+    'as' => 'factura.reporte'
   ]);
 
   Route::get('reporteFiltro', [
-    'uses' => 'Facturacion\Reporte@reporte'
-  ])->name('ReporteFiltro');
+    'uses' => 'Facturacion\Reporte@reporte',
+    'as' => 'ReporteFiltro'
+  ]);
+
+
+
+  Route::get('compra/{cantidad}/{id_producto}', [
+    'as' => 'compra',
+    'uses' => 'Facturacion\CompraProducto@compra'
+
+  ]);
+
+
+
 
   Route::get('reporteDetalle', [
-    'uses' => 'Facturacion\Reporte@reporte_detalle'
-  ])->name('ReporteDetalle');
+    'uses' => 'Facturacion\Reporte@reporte_detalle',
+    'as' => 'ReporteDetalle'
+  ]);
 });

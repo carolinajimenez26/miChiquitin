@@ -11,6 +11,7 @@
 			<th>ID Articulo</th>
 			<th>Cantidad</th>
 			<th>Precio venta</th>
+			<th>Pendiente</th>
 		</thead>
 		<tbody>
 			@foreach($datos as $datos)
@@ -19,6 +20,7 @@
 				<td>{{$datos->id_articulo}}</td>
 				<td>{{$datos->cantidad}}</td>
 				<td>{{$datos->precio_venta}}</td>
+				<td>{{$datos->pendiente}}</td>
 			</tr>
 			@endforeach
 		</tbody>
