@@ -9,7 +9,7 @@
 @section('content')
 
   {!! Form::open(['route' => 'factura.validacion.intermediar', 'method' => 'POST']) !!}
-  
+
   <div class="col-md-7">
     <div class="form-group">
       {!! Form::label('id_cliente', 'Identificación del cliente') !!}
@@ -33,7 +33,7 @@
 
   <div class="col-md-7">
     <div class="form-group">
-      {{ Form::hidden('id_vendedor', Auth::user()->id_tipo) }}
+      {{ Form::hidden('id_vendedor', Auth::user()->id) }}
       {!! Form::submit('Iniciar', ['class' => 'btn btn-primary']) !!}
     </div>
   </div>

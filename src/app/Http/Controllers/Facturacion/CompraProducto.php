@@ -54,41 +54,51 @@ class CompraProducto extends Controller
       }
     }
 
-    $datos_factura = [
-      'fecha' => $fecha,
-      'id_cliente' => $id_cliente,
-      'id_plan_pago' => $metodo,
-      'cuotas' => $cuota,
-      'valor_cuota' => $valorCuota,
-      'id_vendedor' => $id_vendedor,
-      'valor_total' => $valorPagar,
-      'estado' => 'cancelado'
-      ];
+    if ($lista_productos[0] != null){
 
-    $factura = Factura::create($datos_factura);
+      $datos_factura = [
+        'fecha' => $fecha,
+        'id_cliente' => $id_cliente,
+        'id_plan_pago' => $metodo,
+        'cuotas' => $cuota,
+        'valor_cuota' => $valorCuota,
+        'id_vendedor' => $id_vendedor,
+        'valor_total' => $valorPagar,
+        'estado' => 'cancelado'
+        ];
 
-    $lista_productos = preg_split("/[,]+/", $lista_productos[0]);
+      $factura = Factura::create($datos_factura);
 
-    for ($i = 0; $i < count($lista_productos); $i++) {
-      if(($i%7) == 0){
-        $req = new Request();
-        $req->id_factura = $factura->id;
-        $req->id_articulo = $lista_productos[$i];
-        $req->cantidad = $lista_productos[$i+2];
-        $req->precio_venta = $lista_productos[$i+3];
-        $req->pendiente = $lista_productos[$i+5];
-        self::insertFacturaProducto($req);
+      $lista_productos = preg_split("/[,]+/", $lista_productos[0]);
+
+      for ($i = 0; $i < count($lista_productos); $i++) {
+        if(($i%7) == 0){
+          $req = new Request();
+          $req->id_factura = $factura->id;
+          $req->id_articulo = $lista_productos[$i];
+          $req->cantidad = $lista_productos[$i+2];
+          $req->precio_venta = $lista_productos[$i+3];
+          $req->pendiente = $lista_productos[$i+5];
+          self::insertFacturaProducto($req);
+
+          $producto = Articulo::where("id", $lista_productos[$i])->get();
+          $producto[0]->cantidad = $producto[0]->cantidad - (int)$lista_productos[$i+2];
+          $producto[0]->save();
+          //dd($producto[0]->cantidad, $lista_productos[$i+2]);
+        }
       }
-    }
 
-    return view('Facturacion.factura')->with('fecha',$fecha->format('d-M-Y'))
-                                      ->with('idFactura',$factura->id)
-                                      ->with('lista_productos',$lista_productos)
-                                      ->with('total',$valorPagar)
-                                      ->with('id_cliente',$id_cliente)
-                                      ->with('nombre_cliente',$cliente->name)
-                                      ->with('plan_pago',$request->plan_pago)
-                                      ->with('cuota_credito',$cuota);
+      return view('Facturacion.factura')->with('fecha',$fecha->format('d-M-Y'))
+                                        ->with('idFactura',$factura->id)
+                                        ->with('lista_productos',$lista_productos)
+                                        ->with('total',$valorPagar)
+                                        ->with('id_cliente',$id_cliente)
+                                        ->with('nombre_cliente',$cliente->name)
+                                        ->with('plan_pago',$request->plan_pago)
+                                        ->with('cuota_credito',$cuota);
+    } else {
+      return view('Facturacion.error')->with('error', "No se han agregado productos a la factura");
+    }
   }
 
   public function insertFacturaProducto(Request $req) {
@@ -106,20 +116,22 @@ class CompraProducto extends Controller
   public function precioVenta($id_producto){
 
     $Producto = Articulo::where("id", $id_producto)->get();
-    if ($Producto[0]->cantidad > 0) {
       $PrecioBase = $Producto[0]->precio_basico;
       $PrecioProducto = $PrecioBase + ($PrecioBase*0.25);
       return $PrecioProducto;
-    } else {
-      return -1;
-    }
   }
 
   public function compra($cantidad, $id_producto){
     $Producto = Articulo::where("id", $id_producto)->get();
     if (count($Producto) >0){
       //dd($Producto[0]->nombre);
-      $pendiente = $Producto[0]->cantidad - $cantidad;
+      if ($Producto[0]->cantidad < 0) {
+        $pendiente =  - $cantidad;
+      }
+      else{
+
+        $pendiente = $Producto[0]->cantidad - $cantidad;
+      }
       $descripcion = $Producto[0]->descripcion;
       $valorVenta = self::precioVenta($id_producto, $Producto[0]->precio_basico);
       $unitario = $valorVenta;

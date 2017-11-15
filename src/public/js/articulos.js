@@ -56,6 +56,13 @@ $('#agregar').click(function(){
 			document.getElementById(idTotal).innerHTML = lista[i][4];
 			document.getElementById("numero").innerHTML = precio.toString();
 			pendiente = lista[i][6] - cantidad;
+			if (lista[i][6] < 0) {
+        		pendiente = -cantidad;
+      		}
+      		else{
+
+        		pendiente = lista[i][6] - cantidad;
+      		}
 			if (pendiente > 0) {
 				pendiente = 0;
 			}
