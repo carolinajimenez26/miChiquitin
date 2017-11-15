@@ -20,60 +20,51 @@ class pagoDeuda extends Controller
     $factura = Factura::find($idFactura);
     $deuda = Deuda::where("id_factura", $idFactura)->get();
     echo "<br>id_deuda ".$deuda[0]->id_deuda;
+    $full_date = Carbon::now('America/Bogota');
+    echo "<br>full_date ".$full_date;
+    $date = Carbon::now('America/Bogota')->format('Y-m-d');
+    echo "<br>date ".$date;
+    $time = $full_date->toTimeString();
+    echo "<br>time ".$time;
 
     if ($factura == null) {
       dd("ID de la Factura no válida.");
     } else {
       $valor_cuota = $factura->valor_cuota; // 407.45 -> 6 cuotas
       echo "<br>valor_cuota ".$valor_cuota;
-      $valor_restante = $deuda[0]->valor_a_pagar; // 150000
-      echo "<br>valor_restante ".$valor_restante;
+      $valor_restante = $deuda[0]->valor_a_pagar;
+      //echo "<br>valor_restante ".$valor_restante;
       if ($valor_restante == 0) {
         dd("La Factura ya esta paga, este es el id: ", $idFactura);
       } else {
-        if ($abono >= $valor_cuota && $abono <= $valor_restante) {
-          echo "<br>abono >= valor_cuota && abono <= valor_restante";
-          $full_date = Carbon::now('America/Bogota');
-          echo "<br>full_date ".$full_date;
-          $date = Carbon::now('America/Bogota')->format('Y-m-d');
-          echo "<br>date ".$date;
-          $time = $full_date->toTimeString();
-          echo "<br>time ".$time;
+        if ($abono >= $valor_cuota && $abono < $valor_restante) {
+          //echo "<br>abono >= valor_cuota && abono <= valor_restante";
 
           FacturaDeuda::create([
             'id_factura' => $idFactura,
             'abono' => $abono,
             'fecha' => $date,
             'hora' => $time
-          ]); // no lo crea
+          ]); 
 
           Pago::create([
             'id_deuda' => $deuda[0]->id_deuda,
             'valor' => $abono
-          ]); // no lo crea
+          ]); 
 
           Deuda::where('id_factura', $idFactura)->update([
             'valor_pagado' => $deuda[0]->valor_pagado + $abono,
             'valor_a_pagar' => $deuda[0]->valor_a_pagar - $abono
           ]);
 
-          if ($deuda->valor_a_pagar == 0) { // NO ES SEGURO
-            Factura::where('id_factura', $idFactura)->update([
-              'estado' => 'cancelado',
-            ]);
-
-            Deuda::where('id_factura', $idFactura)->update([
-              'estado' => 'cancelado',
-            ]);
-          }
-
-          dd("Se ha realizado un abono de ", $abono);
-        } else if ($valor_cuota > $valor_restante) {
-          echo "<br>valor_cuota > valor_restante";
+          echo "<br> Se ha realizado un abono de ".$abono;
+        } else if ($abono >= $valor_restante) {
+          //echo "<br>abono > valor_restante";
           $full_date = Carbon::now('America/Bogota');
           $date = Carbon::now('America/Bogota')->format('Y-m-d');
           $time = $full_date->toTimeString();
           $devolucion = $abono - $valor_restante;
+
 
           FacturaDeuda::create([
             'id_factura' => $idFactura,
@@ -90,21 +81,16 @@ class pagoDeuda extends Controller
 
           Deuda::where('id_factura', $idFactura)->update([
             'valor_pagado' => $deuda[0]->valor_pagado + $valor_restante,
-            'valor_a_pagar' => $deuda[0]->valor_a_pagar - $valor_restante
+            'valor_a_pagar' => $deuda[0]->valor_a_pagar - $valor_restante,
+            'estado' => 'cancelado'
           ]);
 
-          if ($deuda->valor_a_pagar == 0) {
-            Factura::where('id_factura', $idFactura)->update([
-              'estado' => 'cancelado',
-            ]);
+          Factura::where('id', $idFactura)->update([
+            'estado' => 'cancelado'
+          ]);
 
-            Deuda::where('id_factura', $idFactura)->update([
-              'estado' => 'cancelado',
-            ]);
-          }
-
-          echo "Le sobra al cliente ".$devolucion;
-          dd("Se ha realizado un abono de ", $valor_restante);
+          echo "<br> Le sobra al cliente ".$devolucion;
+          echo "<br> Se ha realizado un abono de ".$valor_restante;
         } else {
           dd("Debe pagar un monto mayor o igual a ", $valor_cuota);
         }
