@@ -1,7 +1,9 @@
 <?php
+
 use Illuminate\Database\Seeder;
-use App\Models\Usuarios\User;
-class Users extends Seeder
+use App\Models\Cartera\Plan_de_pago;
+
+class PlanDePagos extends Seeder
 {
     /**
      * Run the database seeds.
@@ -10,6 +12,6 @@ class Users extends Seeder
      */
     public function run()
     {
-        factory(User::class, 5)->create();
+        factory(Plan_de_pago::class, 5)->create();
     }
 }

@@ -4,11 +4,11 @@
 
   <div class="container">
     <div class="row">
-      <div class="col-sm-9">
-        Factura de Venta # 
+      <div class="col-sm-10">
+        Factura de Venta # {{ $idFactura }}
       </div>
-      <div class="col-sm-3">
-        Fecha
+      <div class="col-sm-2">
+        {{$fecha}}
       </div>
     </div>
   </div>
@@ -19,11 +19,11 @@
 <div class="container-fluid información">
   <div class="row">
      <div class="col-md-8">
-      <label> Vendedor: </label> <br>
-      <label> Identificación del cliente: </label> <br>
-      <label> Nombre del cliente: </label> <br>
-      <label> Plan de pago: </label><br>
-      <label> Cuotas: </label><br>
+      <label> Vendedor: {{ Auth::user()->name }}</label> <br>
+      <label> Identificación del cliente: {{ $id_cliente }}</label> <br>
+      <label> Nombre del cliente: {{ $nombre_cliente }} </label> <br>
+      <label> Plan de pago: {{ $plan_pago }}  </label><br>
+      <label> Cuotas: {{ $cuota_credito }}  </label><br>
     </div>
 
     <div class="col-md-4" align="right">
@@ -40,15 +40,33 @@
 
 <div class="container-fluid productos">
   <table class='table table-striped'>
-      <thead>
-        <th>Codigo</th>
-        <th>Descripción</th>
-        <th>Cantidad</th>
-        <th>Precio venta</th>
-      </thead>
-      <tbody>
-      </tbody>
+    <thead>
+      <th>Codigo</th>
+      <th class="col-sm-5">Descripción</th>
+      <th>Cantidad</th>
+      <th>Precio unitario</th>
+      <th>Precio total</th>
+      <th>Pendiente</th>
+    </thead>
+    <tbody id="body">
+        @for ($i = 0; $i < count($lista_productos); $i++)
+          @if( ($i%7) == 0 )
+          <tr>
+            <td>{{ $lista_productos[$i] }}</td>
+            <td>{{ $lista_productos[$i+1] }}</td>
+            <td>{{ $lista_productos[$i+2] }}</td>
+            <td>{{ $lista_productos[$i+3] }}</td>
+            <td>{{ $lista_productos[$i+4] }}</td>
+            <td>{{ $lista_productos[$i+5] }}</td>
+          </tr>
+          @endif
+        @endfor
+    </tbody>
   </table>
+</div>
+
+<div class="container-fluid productos">
+  <h2>Total: $ {{ (int)$total}}</h2>
 </div>
 
 @endsection

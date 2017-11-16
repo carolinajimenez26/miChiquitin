@@ -2,7 +2,7 @@
 
 @section('titulo')
 <div class="container-fluid">
-  Error
+	Error
 </div>
 @endsection
 
