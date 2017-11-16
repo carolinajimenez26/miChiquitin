@@ -5,128 +5,181 @@ namespace App\Http\Controllers\Facturacion;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Inventario\Articulo;
+use App\Models\Usuarios\User;
+use App\Models\Cartera\Deuda;
+use App\Models\Facturacion\Factura;
 use App\Models\Facturacion\FacturaProducto;
+use App\Http\Controllers\Facturacion\MetodoDePago;
+use Carbon\Carbon;
 
 class CompraProducto extends Controller
 {
-	public function index(){
-		$articulos = "hola mundo";
-		return view('Facturacion.compra')->with('id_cliente',$id_cliente)->with('articulos', $articulos);
-	}
+  public function index(){
+    return view('Facturacion.compra')->with('id_cliente',$id_cliente);
+  }
 
-	public function imprimirFactura(Request $request) {
+  public function imprimirFactura(Request $request) {
+    $id_cliente = (int)$request->id_cliente;
+    $id_vendedor = (int)$request->idVendedor;
+    $cliente = User::find($id_cliente);
+    $cuota = (int)$request->cuota_credito;
+    $fecha = Carbon::now('America/Bogota');
+    $lista_productos = $request->lista;
+    $total = (int)$request->total;
 
-		dd($request);
+    if ($request->plan_pago == 'Efectivo'){
+      $metodo = 1;
+      $valorTotal = MetodoDePago::compraEfectivo($total);
+      $valorCuota = 0;
+      $valorPagar = 0;
+      $estado = "cancelado";
+    } else {
 
-		/*
-			TODO: Este controlador inicia cuando se oprime el botón "Generar Factua"
-			desde la vista. Este controlador tiene que hacer:
-				* traerse el id_cliente, id_vendedor, valor_total_pagar
-				* preguntar si el plan de pago es Efectivo o Crédito
-					* Si es Efectivo:
-						* Deberá llamar al método compraEfectivo del controlador MetodoDePago
-							y generar la factura con TODOS los datos pertinentes.
-						* Una vez generada la factura, deberá retornar view('Facturacion.factura')
-						  con TODOS los valores informativos
-					* Si es Crédito:
-					* Deberá llamar al método compraCredito del controlador MetodoDePago
-						y generar la factura con TODOS los datos pertinentes.
-					* Una vez generada la factura, deberá retornar view('Facturacion.factura')
-						con TODOS los valores informativos.
-				* Retornar la vista de error si en alguno de los casos anteriores se necesita
-		*/
+      if ($request->plan_pago == 'Credito'){
 
-		// $id_cliente = $request->id_cliente;
-		// echo "<br> id_cliente ".$id_cliente;
-		// $id_vendedor = $request->id_vendedor;
-		// echo "<br> id_vendedor ".$id_vendedor;
-		// $plan_pago = $request->metodo;
-		// echo "<br>plan_pago ".$plan_pago;
-		// $cuotas = $request->cuotas;
-		// echo "<br>cuotas ".$cuotas;
-		// return view('Facturacion.factura');
-	}
+        $estado = "pendiente";
+        if ($request->cuota_credito == '1') {
+          $metodo = 2;
+          $obj = MetodoDePago::compraCredito($id_cliente, $total, $cuota);
+          $valorPagar = $obj["valorPagar"];
+          $valorTotal = $obj["valorCompra"];
+          $valorCuota = $obj["valorCuota"];
+        }
+        if ($request->cuota_credito == '3') {
+          $metodo = 3;
+          $obj = MetodoDePago::compraCredito($id_cliente, $total, $cuota);
+          $valorPagar = $obj["valorPagar"];
+          $valorTotal = $obj["valorCompra"];
+          $valorCuota = $obj["valorCuota"];
+        }
+        if ($request->cuota_credito == '6') {
+          $metodo = 4;
+          $obj = MetodoDePago::compraCredito($id_cliente, $total, $cuota);
+          $valorPagar = $obj["valorPagar"];
+          $valorTotal = $obj["valorCompra"];
+          $valorCuota = $obj["valorCuota"];
+        }
 
-	public function insertFacturaProducto(Request $req) {
-		// if req is not null
-		$new = new FacturaProducto;
-		$new->id_factura = $req->id_factura;
-		$new->id_articulo = $req->id_articulo;
-		$new->cantidad = $req->cantidad;
-		$new->precio_venta = $req->precio_venta;
+        if ($obj == false) {
+          return view('Facturacion.error')->with('error', "El cliente no posee credito suficiente");
+        }
+      }
+    }
 
-		$new->save();
-	}
+    if ($lista_productos[0] != null){
 
-	public function precioVenta($id_producto, $precioBase){
-			$porcentaje = ($precioBase*0.25);
-			$PrecioProducto = $precioBase + $porcentaje;
-			return $PrecioProducto;
-	}
+      $datos_factura = [
+        'fecha' => $fecha,
+        'id_cliente' => $id_cliente,
+        'id_plan_pago' => $metodo,
+        'cuotas' => $cuota,
+        'valor_cuota' => $valorCuota,
+        'id_vendedor' => $id_vendedor,
+        'valor_total' => $valorTotal,
+        'estado' => $estado
+        ];
 
-	public function registrarProductos($id_producto, $cantidad, $idFactura){
+      $factura = Factura::create($datos_factura);
 
-		$Producto = Articulo::where("id", $id_producto)->get();
-		if ($Producto[0]->cantidad >= $cantidad) {
-
-			$valorVenta = self::precioVenta($id_producto);
-			if ($valorVenta == -1){
-				echo "No hay disponibilidad del producto";
-				// return false
-			} else {
-				$FacturaProducto = FacturaProducto::where("id_factura", $idFactura)->get();
-				if (sizeof($FacturaProducto) > 0) {
-					FacturaProducto::where('id_articulo', $id_producto)->where('id_factura', $idFactura)->update(['cantidad' => $FacturaProducto[0]->cantidad + $cantidad]);
-				} else {
-					$req = new Request();
-					$req->id_factura = $idFactura;
-					$req->id_articulo = $id_producto;
-					$req->cantidad = $cantidad;
-					$req->precio_venta = $valorVenta;
-
-					self::insertFacturaProducto($req);
-				}
-
-				$cantidadInv = $Producto[0]->cantidad;
-				$nuevaCantidad = $cantidadInv - $cantidad;
-				Articulo::where('id', $id_producto)->update(['cantidad' => $nuevaCantidad]);
-				echo "Cantidad actualizada, el inventario disponible ahora es:".$nuevaCantidad;
-				//return true;
-			}
-		} else {
-			echo "No hay inventario suficiente del producto";
-			//return false;
-		}
-	}
+      $lista_productos = preg_split("/[,]+/", $lista_productos[0]);
 
 
-	public function compra($cantidad, $id_producto){
-		$Producto = Articulo::where("id", $id_producto)->get();
-		if (count($Producto) >0){
-			$pendiente = $Producto[0]->cantidad - $cantidad;
-			$descripcion = $Producto[0]->descripcion;
-			$valorVenta = self::precioVenta($id_producto, $Producto[0]->precio_basico);
-			$unitario = $valorVenta;
-			$total = $valorVenta * $cantidad;
-			if ($pendiente > 0) {
-				$pendiente = 0;
-			}
-			return response()->json([
-				'id_producto' => $id_producto,
-				'descripcion' => $descripcion,
-				'cantidad' => $cantidad,
-				'unitario' => $valorVenta,
-				'total' => $total,
-				'pendiente' => $pendiente,
-				'cantidadInventario' => $Producto[0]->cantidad,
-			]);
-		}
-		return "false";
+      for ($i = 0; $i < count($lista_productos); $i++) {
+        if(($i%7) == 0){
+          $req = new Request();
+          $req->id_factura = $factura->id;
+          $req->id_articulo = $lista_productos[$i];
+          $req->cantidad = $lista_productos[$i+2];
+          $req->precio_venta = $lista_productos[$i+3];
+          $req->pendiente = $lista_productos[$i+5];
+          self::insertFacturaProducto($req);
 
-		
-	}
+          $producto = Articulo::where("id", $lista_productos[$i])->get();
+          $producto[0]->cantidad = $producto[0]->cantidad - (int)$lista_productos[$i+2];
+          $producto[0]->save();
+        }
+      }
 
+      if ($request->plan_pago == 'Credito') {
 
+        $datos_deuda = [
+          'id_usuario' => $id_cliente,
+          'id_plan' => $metodo,
+          'id_factura' => $factura->id,
+          'valor_pagado' => (int)$valorPagar,
+          'valor_a_pagar' => (int)$valorTotal,
+          'plazo_credito' => $fecha->addMonths($cuota),
+          'estado' => "pendiente"
+        ];
 
+        //dd($datos_deuda);
+        $deuda = Deuda::create($datos_deuda);
+        }
 
+      return view('Facturacion.factura')->with('fecha',$fecha->format('d-M-Y'))
+                                        ->with('idFactura',$factura->id)
+                                        ->with('lista_productos',$lista_productos)
+                                        ->with('total',$valorTotal)
+                                        ->with('pagado',$valorPagar)
+                                        ->with('id_cliente',$id_cliente)
+                                        ->with('nombre_cliente',$cliente->name)
+                                        ->with('plan_pago',$request->plan_pago)
+                                        ->with('cuota_credito',$cuota);
+    } else {
+      return view('Facturacion.error')->with('error', "No se han agregado productos a la factura");
+    }
+  }
+
+  public function insertFacturaProducto(Request $req) {
+    // if req is not null
+    $new = new FacturaProducto;
+    $new->id_factura = $req->id_factura;
+    $new->id_articulo = $req->id_articulo;
+    $new->cantidad = $req->cantidad;
+    $new->precio_venta = $req->precio_venta;
+    $new->pendiente = $req->pendiente;
+
+    $new->save();
+  }
+
+  public function precioVenta($id_producto){
+
+    $Producto = Articulo::where("id", $id_producto)->get();
+      $PrecioBase = $Producto[0]->precio_basico;
+      $PrecioProducto = $PrecioBase + ($PrecioBase*0.25);
+      return $PrecioProducto;
+  }
+
+  public function compra($cantidad, $id_producto){
+    $Producto = Articulo::where("id", $id_producto)->get();
+    if (count($Producto) >0){
+      //dd($Producto[0]->nombre);
+      if ($Producto[0]->cantidad < 0) {
+        $pendiente =  - $cantidad;
+      }
+      else{
+
+        $pendiente = $Producto[0]->cantidad - $cantidad;
+      }
+      $descripcion = $Producto[0]->descripcion;
+      $valorVenta = self::precioVenta($id_producto, $Producto[0]->precio_basico);
+      $unitario = $valorVenta;
+      $total = $valorVenta * $cantidad;
+
+      if ($pendiente > 0) {
+        $pendiente = 0;
+      }
+
+      return response()->json(array(
+        'id_producto' => $id_producto,
+        'descripcion' => $descripcion,
+        'cantidad' => $cantidad,
+        'unitario' => $valorVenta,
+        'total' => $total,
+        'pendiente' => $pendiente,
+        'cantidadInventario' => $Producto[0]->cantidad,
+      ));
+    }
+    return "false";
+  }
 }
