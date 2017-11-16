@@ -70,6 +70,22 @@ Route::group(['prefix' => 'Facturacion'], function(){
     'as' => 'ReporteFiltro'
   ]);
 
+  Route::get('Entregapendiente', [
+    'uses' => 'Facturacion\pedido@pedido',
+    'as' => 'Entregapendiente'
+  ]);
+
+  Route::get('EntregasPendiente', [
+    'uses' => 'Facturacion\pedido@entrega',
+    'as' => 'EntregasPendiente'
+  ]);
+
+    Route::get('Entrega', [
+    'uses' => 'Facturacion\pedido@descontar',
+    'as' => 'Entrega'
+  ]);
+
+
   Route::get('reporteDetalle', [
     'uses' => 'Facturacion\Reporte@reporte_detalle',
     'as' => 'ReporteDetalle'
