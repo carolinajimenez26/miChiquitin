@@ -8,14 +8,14 @@ class Pedido extends Model
 {
 	protected $table = "pedidos";
 	
-	protected $fillable = [ 'id_articulo', 'id_proveedor', 'cantidad', 'costo_total', 'fecha', 'estado'];
+	protected $fillable = [ 'id_articulo', 'id_proveedor', 'cantidad', 'costo_total', 'fecha', 'estado','borrado'];
 	
 	public function proveedor(){
-		return $this->belongsTo('App\Models\Inventario\Proveedor');
+		return $this->belongsTo('App\Models\Inventario\Proveedor', 'id_proveedor');
 	}
 	
 	public function articulo(){
-		return $this->belongsTo('App\Models\Inventario\Articulo');
+		return $this->belongsTo('App\Models\Inventario\Articulo', 'id_articulo');
 	}
     
     public function pago_proveedores(){

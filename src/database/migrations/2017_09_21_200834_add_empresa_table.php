@@ -17,6 +17,7 @@ class AddEmpresaTable extends Migration
             $table->increments('id_empresa')->unique();
             $table->string('nombre');
             $table->string('direccion');
+            $table->integer('telefono');
             $table->timestamps();
         });
     }

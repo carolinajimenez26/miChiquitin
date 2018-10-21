@@ -14,13 +14,15 @@ class AlterUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('id_tipo');
+            $table->integer('id_tipo')->nullable();
             $table->string('tipo_rol');
             $table->string('apellidos');
             $table->string('direccion');
-            $table->integer('edad');
-            $table->decimal('credito_maximo', 8, 2);
-            $table->decimal('credito_actual', 8, 2);
+            $table->integer('edad')->unsigned();
+            $table->decimal('credito_maximo', 15, 2);
+            $table->decimal('credito_actual', 15, 2);
+            $table->dateTime('last_login')->nullable();
+            $table->softDeletes();
         });
     }
 

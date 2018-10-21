@@ -23,7 +23,7 @@ class usuario extends Seeder
                 'apellidos' => $faker->lastName,
                 'direccion' => $faker->address, 
                 'email' => $faker-> freeEmail,
-                'password' => '123',
+                'password' => bcrypt('321654'),
                 'edad' => $faker->numberBetween($min = 18, $max = 70),
                 'credito_maximo' => $faker->numberBetween($min = 1000, $max = 2000),
                 'credito_actual' => $faker->numberBetween($min = 1000, $max = 2000),

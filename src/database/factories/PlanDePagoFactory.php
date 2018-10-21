@@ -18,7 +18,6 @@ $factory->define(Plan_de_pago::class, function (Faker\Generator $faker) {
     return [
         'nombre_plan' => "",
         'cuotas' => 0,
-        'valor_cuota' => 0,
         'interes' => 0,
         'forma_pago' => ""
     ];

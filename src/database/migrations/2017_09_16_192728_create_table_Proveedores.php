@@ -21,10 +21,11 @@ class CreateTableProveedores extends Migration
 			$table->string('id_representante');
 			$table->string('telefono');
 			$table->string('razon_social');
-			$table->string('per_juv');
+			$table->string('per_jur');
 			$table->string('departamento');
 			$table->string('direccion');
 			$table->string('ciudad');
+            $table->tinyinteger('borrado');
             $table->timestamps();
 					
         });

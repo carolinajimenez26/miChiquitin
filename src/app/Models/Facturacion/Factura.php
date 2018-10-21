@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Factura extends Model
 {
+    //protected $primaryKey ='id';
+
     protected $table = 'facturas';
 
     protected $fillable = ['fecha', 'id_cliente', 'id_plan_pago', 'cuotas', 'valor_cuota', 'id_vendedor', 'valor_total', 'estado'];
@@ -19,7 +21,7 @@ class Factura extends Model
     }
 
     public function deuda(){
-        return $this->hasOne('App\Models\Cartera\Deuda');
+        return $this->hasOne('App\Models\Cartera\Deuda','id_factura');
     }
 
     public function clientes() {

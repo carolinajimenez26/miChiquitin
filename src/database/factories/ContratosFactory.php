@@ -18,7 +18,7 @@ $factory->define(Contrato::class, function (Faker\Generator $faker) {
     return [
         'tipo' => '',
         'salario' => $faker->randomElement($array = array (100000,200000,500000)),
-        'fecha_inicial' => $faker->date($format = 'Y-m-d', $max = 'now'),
-        'fecha_fin' => $faker->date($format = 'Y-m-d', $max = 'now')
+        'fecha_inicial' => $faker->dateTimeThisYear($max = 'now', $timezone = null),
+        'fecha_fin' => $faker->dateTimeThisMonth($max = 'now', $timezone = null)
     ];
 });

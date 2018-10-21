@@ -11,7 +11,7 @@ use App\Models\Facturacion\Factura;
 use App\Models\Facturacion\FacturaProducto;
 use App\Http\Controllers\Facturacion\MetodoDePago;
 use Carbon\Carbon;
-
+use App\Models\Contabilidad\Varcontrol;
 class CompraProducto extends Controller
 {
   public function index(){
@@ -33,6 +33,9 @@ class CompraProducto extends Controller
       $valorCuota = 0;
       $valorPagar = 0;
       $estado = "cancelado";
+      $efectivo = Varcontrol::where('nombre', '=', 'efectivo')->get()->first();
+      $resta = $efectivo->valor + $total;
+      $efectivo->update(['valor' => $resta]);
     } else {
 
       if ($request->plan_pago == 'Credito'){

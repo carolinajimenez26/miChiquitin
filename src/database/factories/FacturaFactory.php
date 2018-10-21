@@ -23,9 +23,9 @@ $factory->define(Factura::class, function (Faker\Generator $faker) {
       $vendedor = $faker->randomElement($usersIds);
     }
     return [
-        'fecha' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'fecha' => $faker->dateTimeThisMonth($max = 'now', $timezone = date_default_timezone_get()),
         'id_cliente' => $cliente,
-        'id_plan_pago' => $faker->unique()->randomDigitNotNull,
+        'id_plan_pago' => $faker->randomDigitNotNull,
         'cuotas' => 0,//$faker->randomElement($array = array (1, 2, 3)),
         'id_vendedor' => $vendedor,
         'valor_total' => $faker->numberBetween($min = 100000, $max = 500000),

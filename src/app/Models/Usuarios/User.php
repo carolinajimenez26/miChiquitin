@@ -1,9 +1,10 @@
-<?php 
+<?php
 
 namespace App\Models\Usuarios;
 
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
@@ -14,8 +15,10 @@ class User extends Authenticatable
      *
      * @var array
      */
+     use softDeletes;
+     protected $dates = ['deleted_at'];
     protected $fillable = [
-        'name', 'email', 'password', 'id_tipo', 'tipo_rol', 'apellidos', 'direccion', 'edad',
+        'name', 'email', 'password','id_tipo' ,'tipo_rol', 'apellidos', 'direccion', 'edad', 'credito_maximo','credito_actual',
     ];
 
     /**
@@ -28,7 +31,7 @@ class User extends Authenticatable
     ];
 
     public function empleado(){
-        return $this->hasOne('App\Models\Usuarios\Empleado');
+        return $this->hasOne('App\Models\Usuarios\Empleado', 'id_usuario');
     }
 
     public function cliente(){
@@ -36,7 +39,7 @@ class User extends Authenticatable
     }
 
     public function telefonos(){
-        return $this->hasMany('App\Models\Usuarios\Telefono');   
+        return $this->hasMany('App\Models\Usuarios\Telefono');
     }
 
     public function facturas(){
@@ -48,6 +51,24 @@ class User extends Authenticatable
     }
 
     public function deuda(){
-        return $this->hasOne('App\Models\Cartera\Deuda');
+        return $this->hasOne('App\Models\Cartera\Deuda','id_usuario');
+    }
+
+    public function scopeName($query, $name){ //scope query para reporte por nombre
+      if(trim($name)!=""){
+        $query->where("name","LIKE","%$name%")->get();
+      }
+    }
+
+    public function scopeCredito($query, $cre_min,$cre_max){ //query para listar usuarios por un rango de credito
+      $query->whereBetween('credito_actual', [$cre_min, $cre_max])->get();
+    }
+
+    public function scopeCreditomax($query, $cre_min,$cre_max){ //query para listar usuarios por un rango de credito
+      $query->whereBetween('credito_maximo', [$cre_min, $cre_max])->get();
+    }
+
+    public function scopeAcceso($query){
+      $query->where('last_login','!=',null)->get();
     }
 }

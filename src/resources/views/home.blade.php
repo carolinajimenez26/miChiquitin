@@ -5,6 +5,11 @@
     @endsection
 
 @section('content')
+  @if (Session::has('flash_message'))
+    <script type="text/javascript">
+      alert("{{Session::get('flash_message')}}");
+    </script>
+   @endif
     <div class="jumbotron">
         <h1 class="display-3">Bienvenido </h1>
         <p class="lead">Hola, {{Auth::user()->name}}, aqui podrás .......... .  </p>

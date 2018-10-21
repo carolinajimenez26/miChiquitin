@@ -17,8 +17,7 @@ class CreatePlanDePagosTable extends Migration
             $table->increments('id_plan_de_pago');
             $table->string('nombre_plan');
             $table->integer('cuotas');
-            $table->decimal('valor_cuota', 8, 2);
-            $table->decimal('interes', 8, 2);
+            $table->decimal('interes', 15, 2);
             $table->string('forma_pago');
             $table->timestamps();
 

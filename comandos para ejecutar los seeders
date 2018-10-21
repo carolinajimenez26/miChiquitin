@@ -1,0 +1,7 @@
+php artisan migrate --seed
+php artisan db:seed --class=Facturas
+php artisan db:seed --class=Planpago
+php artisan db:seed --class=Deudas
+php artisan db:seed --class=proveedorSeed
+php artisan db:seed --class=articuloSeed
+php artisan db:seed --class=pedidoSeed

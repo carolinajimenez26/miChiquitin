@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Facturacion;
 
+use App\Models\Contabilidad\Varcontrol;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Facturacion\Factura;
@@ -95,6 +96,10 @@ class pagoDeuda extends Controller
             'valor_a_pagar' => $deuda[0]->valor_a_pagar - $valor_restante,
             'estado' => 'cancelado'
           ]);
+
+          $efectivo = Varcontrol::where('nombre', '=', 'efectivo')->get()->first();
+          $resta = $efectivo->valor + $valor_restante;
+          $efectivo->update(['valor' => $resta]);
 
           Factura::where('id', $idFactura)->update([
             'estado' => 'cancelado'

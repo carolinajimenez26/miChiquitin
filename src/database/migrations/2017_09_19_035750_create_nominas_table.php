@@ -17,18 +17,18 @@ class CreateNominasTable extends Migration
             $table->increments('id');
             $table->date('fecha_pago')->nullable();
             $table->date('fecha_prenomina');
+            $table->decimal('horas_extras', 15, 2)->nullable();
             $table->decimal('base', 15, 2);
-            $table->integer('horas_extras')->nullable();
-            $table->decimal('salud', 8, 2)->nullable();
-            $table->decimal('pension', 8, 2)->nullable();
-            $table->decimal('aux_transporte', 8, 2)->nullable();
-            $table->decimal('neto', 8, 2);
-            $table->decimal('arl', 8, 2)->nullable();
+            $table->decimal('salud', 15, 2)->nullable();
+            $table->decimal('pension', 15, 2)->nullable();
+            $table->decimal('aux_transporte', 15, 2)->nullable();
+            $table->decimal('neto', 15, 2);
+            $table->decimal('arl', 15, 2)->nullable();
             $table->integer('id_empleado')->unsigned();
             $table->string('estado')->nullable();
             $table->timestamps();
 
-            $table->foreign('id_empleado')->references('id')->on('users');
+            //$table->foreign('id_empleado')->references('id')->on('empleados');
         });
 
 

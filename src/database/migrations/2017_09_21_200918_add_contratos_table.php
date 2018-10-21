@@ -16,9 +16,10 @@ class AddContratosTable extends Migration
         Schema::create('contratos', function (Blueprint $table) {
             $table->increments('id_contrato');
             $table->string('tipo');
-            $table->decimal('salario', 8, 2);
+            $table->decimal('salario', 15, 2);
             $table->date('fecha_inicial');
             $table->date('fecha_fin');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class FacturaDeuda extends Model
 {
+	
     protected $table = 'factura_deuda';
 
     protected $fillable = ['id_factura', 'abono', 'fecha', 'hora'];

@@ -19,7 +19,7 @@ class provedores extends Seeder
         for ($i = 0; $i < $limit; $i++) {
             DB::table("proveedores")->insert([ //,
                 'id_tipo' => $faker->name,
-                'fecha' => $faker->date($format = 'Y-m-d', $max = 'now'),
+                'fecha' => $faker->dateTimeThisYear($max = 'now', $timezone = null),
                 'representante_legal' => $faker->name,
                 'id_representante' => $faker->unique()->randomDigitNotNull,
                 'telefono' => $faker->phoneNumber,

@@ -18,9 +18,9 @@ $factory->define(App\Models\Usuarios\User::class, function (Faker\Generator $fak
     return [
         'name' => $faker->firstName,
         'email' => $faker->unique()->safeEmail,
-        'password' => bcrypt($faker->password),
+        'password' => bcrypt('321654'),
         'remember_token' => str_random(10),
-        'id_tipo' => $faker->randomElement($array = array (0, 1)),
+        'id_tipo' => $faker->unique()->numberBetween($min = 11, $max = 1000),
         'tipo_rol' => '',
         'apellidos' => $faker->lastName,
         'direccion' => $faker->address,

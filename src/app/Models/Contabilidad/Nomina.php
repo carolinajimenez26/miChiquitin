@@ -12,8 +12,8 @@ class nomina extends Model
     protected $fillable = ['fecha_pago', 'fecha_prenomina', 'base', 'horas_extras', 'salud', 'pension', 'aux_transporte', 'neto', 'id_empleado', 'arl', 'estado',
 	];
 
-	public function users(){
-		return $this->hasMany('App\Models\Usuarios\User');
+	public function empleado(){
+		return $this->belongsTo('App\Models\Usuarios\Empleado', 'id_empleado', 'id_empleado');
 	}
 
 }

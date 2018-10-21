@@ -19,7 +19,6 @@ class plan_pago extends Seeder
             DB::table("plan_de_pagos")->insert([ //,
             	'nombre_plan' => 'efectivo',
                 'cuotas' => '0',
-                'valor_cuota' => '0',
                 'interes' => '0',
                 'forma_pago' => 'efectivo'
             ]);

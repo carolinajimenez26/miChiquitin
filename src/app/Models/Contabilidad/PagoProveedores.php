@@ -9,11 +9,11 @@ class pagoProveedores extends Model
     //
     protected $table = 'pago_proveedores';
 
-    protected $fillable = ['fecha_pago', 'fecha_orden', 'valor_pagar', 'id_pedido', 'id_plan_pago', 'estado',
+    protected $fillable = ['fecha_pago', 'fecha_orden', 'valor_pagar', 'id_pedido', 'estado',
 	];
 
 	public function pedido(){
-		return $this->belongsTo('App\Models\Inventario\Pedido');
+		return $this->belongsTo('App\Models\Inventario\Pedido', 'id_pedido');
 	}
 
 	public function plan_de_pago(){

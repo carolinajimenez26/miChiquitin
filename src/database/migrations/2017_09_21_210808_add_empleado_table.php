@@ -21,8 +21,9 @@ class AddEmpleadoTable extends Migration
             $table->string('estado');
             $table->string('cargo');
             $table->string('area');
+            $table->integer('numberphone')->nullable();
+            $table->softDeletes();
             $table->timestamps();
-
             $table->foreign('id_usuario')->references('id')->on('users');
             $table->foreign('id_empresa')->references('id_empresa')->on('empresa');
             $table->foreign('id_contrato')->references('id_contrato')->on('contratos');

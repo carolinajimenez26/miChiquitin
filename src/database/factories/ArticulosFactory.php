@@ -12,18 +12,23 @@
 */
 
 use App\Models\Inventario\Proveedor;
-use App\Models\Inventario\Articulo;
+
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
-$factory->define(Articulo::class, function (Faker\Generator $faker) {
+$factory->define(App\Models\Inventario\Articulo::class, function (Faker\Generator $faker) {
+
+    $array_articulos = ['Jean_azul(12)', 'Camisa_mangaLarga(14)', 'boxer_decorado(8)', 'Falda_roja(12)', 'Camisa_azul(14)', 'Vestido_blanco(6)', 'Falda_amarilla(8)', 'Pantalon_rojo(10)',
+            'Pantaloneta_azul(6)', 'Vestido_verde(10)'];
+
     $proveedoresIds = Proveedor::all()->pluck('id')->toArray();
+
     return [
-        'id' => $faker->unique()->randomDigitNotNull."",
-        'nombre' => $faker->firstName,
-        'descripcion' => $faker->sentence($nbWords = 6, $variableNbWords = true),
-        'precio_basico' => $faker->numberBetween($min = 1000, $max = 9000),
-        'cantidad' => $faker->randomDigit,
+        'id' => $faker->unique()->numberBetween($min = 100, $max = 1000),
+        'nombre' => $faker->randomElement($array_articulos),
+        'descripcion' => $faker->sentence($nbWords = 3, $variableNbWords = true),
+        'precio_basico'=> $faker->randomFloat($nbMaxDecimals = 2, $min = 10000, $max = 50000),
+        'cantidad' => $faker->numberBetween($min = 10, $max = 50),
         'id_proveedor' => $faker->randomElement($proveedoresIds),
-        'fecha' => $faker->date($format = 'Y-m-d', $max = 'now')
+        'fecha' => $faker->dateTimeThisYear($max = 'now', $timezone = date_default_timezone_get())
     ];
 });

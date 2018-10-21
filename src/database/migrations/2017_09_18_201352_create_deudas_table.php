@@ -18,7 +18,7 @@ class CreateDeudasTable extends Migration
             $table->integer('id_usuario')->unsigned();
             $table->integer('id_plan')->unsigned();
             $table->integer('id_factura')->unsigned();
-            $table->decimal('valor_pagado', 8, 2);
+            $table->decimal('valor_pagado', 15, 2);
             $table->decimal('valor_a_pagar');
             $table->date('plazo_credito');
             $table->string('estado');

@@ -21,12 +21,13 @@ $factory->define(Deuda::class, function (Faker\Generator $faker) {
     $planpagosIds = Plan_de_pago::all()->pluck('id_plan_de_pago')->toArray();
     $facturasIds = Factura::all()->pluck('id')->toArray();
     return [
-        'id_usuario' => $faker->unique()->randomElement($usersIds),
-        'id_plan' => $faker->unique()->randomElement($planpagosIds),
-        'id_factura' => $faker->unique()->randomElement($facturasIds),
+
+        'id_usuario' => $faker->randomElement($usersIds),
+        'id_plan' => $faker->randomElement($planpagosIds),
+        'id_factura' => $faker->randomElement($facturasIds),
         'valor_pagado' => 0,
         'valor_a_pagar' => $faker->randomElement($array = array (100000, 150000, 200000)),
-        'plazo_credito' => $faker->date($format = 'Y-m-d', $max = 'now'),
+        'plazo_credito' => $faker->dateTimeThisMonth($max = 'now', $timezone = null),
         'estado' => "pendiente"
     ];
 });

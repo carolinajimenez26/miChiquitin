@@ -13,18 +13,20 @@ class CreateTablePedido extends Migration
      */
     public function up()
     {
-        Schema::create('pedidos', function (Blueprint $table) {
+
+      Schema::create('pedidos', function (Blueprint $table) {
             $table->increments('id');
-			$table->string('id_articulo');
-			$table->integer('id_proveedor')->unsigned();
-			$table->integer('cantidad');
-			$table->decimal('costo_total', 8, 2);
-			$table->date('fecha');
-			$table->string('estado');
+    	    $table->string('id_articulo');
+    	    $table->integer('id_proveedor')->unsigned();
+    	    $table->integer('cantidad');
+    	    $table->decimal('costo_total', 15, 2);
+    	    $table->date('fecha');
+    	    $table->string('estado');
+            $table->tinyinteger('borrado')->default('2');
             $table->timestamps();
-			
-			$table->foreign('id_articulo')->references('id')->on('articulos');
-			$table->foreign('id_proveedor')->references('id')->on('proveedores');
+		
+		    $table->foreign('id_articulo')->references('id')->on('articulos');
+		    $table->foreign('id_proveedor')->references('id')->on('proveedores');
         });
     }
 
